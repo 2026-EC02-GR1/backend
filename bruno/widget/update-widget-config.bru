@@ -1,0 +1,22 @@
+meta {
+  name: Update Widget Config
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/widget
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "language": "fr",
+    "custom_css": ".resa-widget { font-family: sans-serif; }"
+  }
+}

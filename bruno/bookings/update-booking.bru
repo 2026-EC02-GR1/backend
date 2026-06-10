@@ -1,0 +1,21 @@
+meta {
+  name: Update Booking Status
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{base_url}}/api/v1/bookings/{{booking_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "status": "confirmed"
+  }
+}

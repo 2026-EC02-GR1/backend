@@ -1,0 +1,11 @@
+meta {
+  name: Delete Hold Slot (public)
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/hold-slots/{{hold_slot_id}}
+  body: none
+  auth: none
+}

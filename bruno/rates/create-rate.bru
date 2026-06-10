@@ -1,0 +1,31 @@
+meta {
+  name: Create Rate
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/rates
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Base rate",
+    "base_price_per_night": 120.00,
+    "start_date": "2026-01-01",
+    "end_date": "2026-12-31",
+    "is_high_season": false
+  }
+}
+
+script:post-response {
+  if (res.status === 201 && res.body.id) {
+    bru.setVar("rate_id", res.body.id);
+  }
+}

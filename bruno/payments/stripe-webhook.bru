@@ -1,0 +1,22 @@
+meta {
+  name: Stripe Webhook (501)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/v1/payments/webhook
+  body: json
+  auth: none
+}
+
+headers {
+  stripe-signature: t=123,v1=abc
+}
+
+body:json {
+  {
+    "type": "payment_intent.succeeded",
+    "data": {}
+  }
+}

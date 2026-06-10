@@ -1,0 +1,24 @@
+meta {
+  name: Create Hold Slot (public)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/hold-slots
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "start_date": "2026-07-01",
+    "end_date": "2026-07-08"
+  }
+}
+
+script:post-response {
+  if (res.status === 201 && res.body.id) {
+    bru.setVar("hold_slot_id", res.body.id);
+  }
+}
