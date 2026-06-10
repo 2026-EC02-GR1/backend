@@ -83,25 +83,22 @@ propertiesRouter.post("/", authenticate, validate(propertyCreateSchema), async (
 })
 
 propertiesRouter.get("/:id", authenticate, async (req, res) => {
-	const property = await requireProperty(req.params.id, req.manager)
+	const { id } = req.params as { id: string }
+	const property = await requireProperty(id, req.manager)
 	res.json(serializeProperty(property))
 })
 
 propertiesRouter.patch("/:id", authenticate, validate(propertyUpdateSchema), async (req, res) => {
-	await requireProperty(req.params.id, req.manager)
-	const property = await prisma.property.update({
-		where: { id: req.params.id },
-		data: req.body,
-	})
+	const { id } = req.params as { id: string }
+	await requireProperty(id, req.manager)
+	const property = await prisma.property.update({ where: { id }, data: req.body })
 	res.json(serializeProperty(property))
 })
 
 propertiesRouter.delete("/:id", authenticate, async (req, res) => {
-	await requireProperty(req.params.id, req.manager)
-	await prisma.property.update({
-		where: { id: req.params.id },
-		data: { deleted_at: new Date() },
-	})
+	const { id } = req.params as { id: string }
+	await requireProperty(id, req.manager)
+	await prisma.property.update({ where: { id }, data: { deleted_at: new Date() } })
 	res.status(204).send()
 })
 

@@ -3,6 +3,11 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bun run index.ts",
+    "seed:property": "bun run scripts/seed-property.ts",
+    "seed:booking": "bun run scripts/seed-booking.ts"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
     "@types/bun": "latest",
