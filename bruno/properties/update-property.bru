@@ -1,0 +1,22 @@
+meta {
+  name: Update Property
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{base_url}}/api/v1/properties/{{property_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "description": "Updated description",
+    "active": true
+  }
+}

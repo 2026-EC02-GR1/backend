@@ -1,0 +1,21 @@
+meta {
+  name: Update Rate
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/rates/{{rate_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "base_price_per_night": 135.00
+  }
+}

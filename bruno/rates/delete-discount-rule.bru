@@ -1,0 +1,15 @@
+meta {
+  name: Delete Discount Rule
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/rates/{{rate_id}}/discount-rules/{{rule_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

@@ -1,0 +1,11 @@
+meta {
+  name: Estimate Price (public)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/availability/estimate?check_in=2026-07-01&check_out=2026-07-08
+  body: none
+  auth: none
+}

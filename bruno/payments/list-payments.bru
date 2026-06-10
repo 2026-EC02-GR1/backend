@@ -1,0 +1,15 @@
+meta {
+  name: List Payments (501)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/bookings/{{booking_id}}/payments
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

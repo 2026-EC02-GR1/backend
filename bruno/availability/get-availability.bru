@@ -1,0 +1,15 @@
+meta {
+  name: Get Availability
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/availability?start_date=2026-07-01&end_date=2026-07-31
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

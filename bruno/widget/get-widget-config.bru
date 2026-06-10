@@ -1,0 +1,15 @@
+meta {
+  name: Get Widget Config
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/widget
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

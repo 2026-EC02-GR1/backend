@@ -89,7 +89,8 @@ model User {
   id                String    @id @default(uuid()) @db.Uuid
   name              String
   email             String    @unique
-  password_hash     String
+  email_verified    Boolean   @default(false)
+  image             String?
   phone             String?
   two_fa_secret     String?
   stripe_account_id String?
@@ -99,8 +100,54 @@ model User {
 
   roles      UserRole[]
   properties Property[]
+  sessions   Session[]
+  accounts   Account[]
 
   @@map("users")
+}
+
+model Session {
+  id         String   @id @default(uuid())
+  expires_at DateTime
+  token      String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  ip_address String?
+  user_agent String?
+  user_id    String   @db.Uuid
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                         String    @id @default(uuid())
+  account_id                 String
+  provider_id                String
+  user_id                    String    @db.Uuid
+  access_token               String?
+  refresh_token              String?
+  id_token                   String?
+  access_token_expires_at    DateTime?
+  refresh_token_expires_at   DateTime?
+  scope                      String?
+  password                   String?
+  created_at                 DateTime  @default(now())
+  updated_at                 DateTime  @updatedAt
+  user                       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+model Verification {
+  id         String    @id @default(uuid())
+  identifier String
+  value      String
+  expires_at DateTime
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@map("verifications")
 }
 
 model Role {

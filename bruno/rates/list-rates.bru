@@ -1,0 +1,15 @@
+meta {
+  name: List Rates
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/rates
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

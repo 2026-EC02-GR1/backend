@@ -1,0 +1,29 @@
+meta {
+  name: Create Discount Rule
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/api/v1/properties/{{property_id}}/rates/{{rate_id}}/discount-rules
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "min_nights": 7,
+    "max_nights": null,
+    "discount_percentage": 10
+  }
+}
+
+script:post-response {
+  if (res.status === 201 && res.body.id) {
+    bru.setVar("rule_id", res.body.id);
+  }
+}

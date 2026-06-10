@@ -1,0 +1,35 @@
+meta {
+  name: Create Property
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/v1/properties
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Villa les Pins",
+    "description": "Beautiful villa with pool",
+    "address": "12 Chemin des Oliviers",
+    "city": "Nice",
+    "zip_code": "06000",
+    "country": "France",
+    "max_capacity": 8,
+    "nb_bedrooms": 4,
+    "nb_bathrooms": 2
+  }
+}
+
+script:post-response {
+  if (res.status === 201 && res.body.id) {
+    bru.setVar("property_id", res.body.id);
+  }
+}
