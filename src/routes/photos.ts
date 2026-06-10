@@ -36,16 +36,18 @@ const reorderSchema = z.object({
 })
 
 photosRouter.get("/", authenticate, async (req, res) => {
-	await requireProperty(req.params.property_id, req.manager)
+	const { property_id } = req.params as { property_id: string }
+	await requireProperty(property_id, req.manager)
 	const photos = await prisma.propertyPhoto.findMany({
-		where: { property_id: req.params.property_id },
+		where: { property_id },
 		orderBy: { order: "asc" },
 	})
 	res.json(photos)
 })
 
 photosRouter.post("/", authenticate, upload.single("file"), async (req, res) => {
-	await requireProperty(req.params.property_id, req.manager)
+	const { property_id } = req.params as { property_id: string }
+	await requireProperty(property_id, req.manager)
 
 	if (!req.file) {
 		res.status(422).json({ code: "validation_error", message: "File is required", fields: [{ field: "file", message: "File is required" }] })
@@ -53,7 +55,7 @@ photosRouter.post("/", authenticate, upload.single("file"), async (req, res) => 
 	}
 
 	const last = await prisma.propertyPhoto.findFirst({
-		where: { property_id: req.params.property_id },
+		where: { property_id },
 		orderBy: { order: "desc" },
 	})
 	const nextOrder = (last?.order ?? 0) + 1
@@ -63,7 +65,7 @@ photosRouter.post("/", authenticate, upload.single("file"), async (req, res) => 
 
 	const photo = await prisma.propertyPhoto.create({
 		data: {
-			property_id: req.params.property_id,
+			property_id,
 			storage_url: storageUrl,
 			order: nextOrder,
 		},
@@ -73,7 +75,7 @@ photosRouter.post("/", authenticate, upload.single("file"), async (req, res) => 
 })
 
 photosRouter.patch("/reorder", authenticate, validate(reorderSchema), async (req, res) => {
-	const { property_id } = req.params
+	const { property_id } = req.params as { property_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const { order: ids } = req.body as { order: string[] }
@@ -102,7 +104,7 @@ photosRouter.patch("/reorder", authenticate, validate(reorderSchema), async (req
 })
 
 photosRouter.delete("/:photo_id", authenticate, async (req, res) => {
-	const { property_id, photo_id } = req.params
+	const { property_id, photo_id } = req.params as { property_id: string; photo_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const photo = await prisma.propertyPhoto.findUnique({ where: { id: photo_id } })

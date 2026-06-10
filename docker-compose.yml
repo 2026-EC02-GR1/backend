@@ -1,5 +1,9 @@
 # Postgres for local development. Variables come from .env (read automatically
 # by Docker Compose from the project root).
+#
+# This Postgres is shared with ../service_reservation (reservation microservice,
+# run on the host: `bun run dev`, port 3001 — see RESERVATION_SERVICE_URL).
+# This repo owns the Prisma migrations; the service only runs `prisma generate`.
 services:
   postgres:
     image: postgres:17-alpine

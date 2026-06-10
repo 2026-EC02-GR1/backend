@@ -5,6 +5,7 @@ import { authenticate } from "../middleware/auth"
 import { validate } from "../middleware/validate"
 import { requireProperty } from "./properties"
 import { buildWidgetSnippet } from "../domain/widget"
+import { DomainError } from "../domain/errors"
 
 export const widgetRouter = Router({ mergeParams: true })
 
@@ -14,19 +15,16 @@ const widgetConfigSchema = z.object({
 })
 
 widgetRouter.get("/", authenticate, async (req, res) => {
-	const { property_id } = req.params
+	const { property_id } = req.params as { property_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const config = await prisma.widgetConfig.findUnique({ where: { property_id } })
-	if (!config) {
-		res.status(404).json({ code: "not_found", message: "Widget configuration not found" })
-		return
-	}
+	if (!config) throw new DomainError("not_found", "Widget configuration not found")
 	res.json(config)
 })
 
 widgetRouter.put("/", authenticate, validate(widgetConfigSchema), async (req, res) => {
-	const { property_id } = req.params
+	const { property_id } = req.params as { property_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const { language, custom_css } = req.body as z.infer<typeof widgetConfigSchema>
@@ -39,7 +37,7 @@ widgetRouter.put("/", authenticate, validate(widgetConfigSchema), async (req, re
 })
 
 widgetRouter.get("/snippet", authenticate, async (req, res) => {
-	const { property_id } = req.params
+	const { property_id } = req.params as { property_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const cdnBaseUrl = process.env.WIDGET_CDN_URL

@@ -6,9 +6,12 @@ import { errorHandler } from "./middleware/error"
 import { propertiesRouter } from "./routes/properties"
 import { photosRouter } from "./routes/photos"
 import { ratesRouter } from "./routes/rates"
-import { availabilityRouter, holdSlotsRouter } from "./routes/availability"
-import { bookingsRouter } from "./routes/bookings"
 import { paymentsRouter, webhookRouter } from "./routes/payments"
+import {
+	availabilityProxyRouter,
+	bookingsProxyRouter,
+	holdSlotsProxyRouter,
+} from "./proxy/reservation"
 import { widgetRouter } from "./routes/widget"
 
 const app = express()
@@ -38,9 +41,10 @@ const v1 = express.Router()
 v1.use("/properties", propertiesRouter)
 v1.use("/properties/:property_id/photos", photosRouter)
 v1.use("/properties/:property_id/rates", ratesRouter)
-v1.use("/properties/:property_id/availability", availabilityRouter)
-v1.use("/properties/:property_id/hold-slots", holdSlotsRouter)
-v1.use("/bookings", bookingsRouter)
+// Reservation domain — proxied to service_reservation
+v1.use("/properties/:property_id/availability", availabilityProxyRouter)
+v1.use("/properties/:property_id/hold-slots", holdSlotsProxyRouter)
+v1.use("/bookings", bookingsProxyRouter)
 v1.use("/bookings", paymentsRouter)
 
 v1.use("/properties/:property_id/widget", widgetRouter)

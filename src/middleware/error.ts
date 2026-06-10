@@ -13,6 +13,7 @@ const DOMAIN_STATUS: Record<string, number> = {
 	rate_overlap: 422,
 	invalid_date: 422,
 	invalid_date_range: 422,
+	validation_error: 422,
 }
 
 export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction) {

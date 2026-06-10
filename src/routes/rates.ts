@@ -6,7 +6,9 @@ import { validate } from "../middleware/validate"
 import { requireProperty } from "./properties"
 import { assertNoBaseRateOverlap } from "../domain/pricing"
 import { DomainError } from "../domain/errors"
-import type { Rate } from "../../generated/prisma/client"
+import type { Rate, Prisma } from "../../generated/prisma/client"
+
+type DiscountRuleWithRate = Prisma.DiscountRuleGetPayload<{ include: { rate: true } }>
 
 export const ratesRouter = Router({ mergeParams: true })
 
@@ -44,9 +46,10 @@ const discountRuleCreateSchema = z.object({
 })
 
 ratesRouter.get("/", authenticate, async (req, res) => {
-	await requireProperty(req.params.property_id, req.manager)
+	const { property_id } = req.params as { property_id: string }
+	await requireProperty(property_id, req.manager)
 	const rates = await prisma.rate.findMany({
-		where: { property_id: req.params.property_id },
+		where: { property_id },
 		include: { discount_rules: true },
 		orderBy: { start_date: "asc" },
 	})
@@ -54,7 +57,7 @@ ratesRouter.get("/", authenticate, async (req, res) => {
 })
 
 ratesRouter.post("/", authenticate, validate(rateCreateSchema), async (req, res) => {
-	const { property_id } = req.params
+	const { property_id } = req.params as { property_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const body = req.body as z.infer<typeof rateCreateSchema>
@@ -83,7 +86,7 @@ ratesRouter.post("/", authenticate, validate(rateCreateSchema), async (req, res)
 })
 
 ratesRouter.patch("/:rate_id", authenticate, validate(rateUpdateSchema), async (req, res) => {
-	const { property_id, rate_id } = req.params
+	const { property_id, rate_id } = req.params as { property_id: string; rate_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const rate = await prisma.rate.findUnique({ where: { id: rate_id } })
@@ -121,7 +124,7 @@ ratesRouter.patch("/:rate_id", authenticate, validate(rateUpdateSchema), async (
 })
 
 ratesRouter.delete("/:rate_id", authenticate, async (req, res) => {
-	const { property_id, rate_id } = req.params
+	const { property_id, rate_id } = req.params as { property_id: string; rate_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const rate = await prisma.rate.findUnique({ where: { id: rate_id } })
@@ -134,7 +137,7 @@ ratesRouter.delete("/:rate_id", authenticate, async (req, res) => {
 })
 
 ratesRouter.post("/:rate_id/discount-rules", authenticate, validate(discountRuleCreateSchema), async (req, res) => {
-	const { property_id, rate_id } = req.params
+	const { property_id, rate_id } = req.params as { property_id: string; rate_id: string }
 	await requireProperty(property_id, req.manager)
 
 	const rate = await prisma.rate.findUnique({ where: { id: rate_id } })
@@ -155,13 +158,17 @@ ratesRouter.post("/:rate_id/discount-rules", authenticate, validate(discountRule
 })
 
 ratesRouter.delete("/:rate_id/discount-rules/:rule_id", authenticate, async (req, res) => {
-	const { property_id, rate_id, rule_id } = req.params
+	const { property_id, rate_id, rule_id } = req.params as {
+		property_id: string
+		rate_id: string
+		rule_id: string
+	}
 	await requireProperty(property_id, req.manager)
 
-	const rule = await prisma.discountRule.findUnique({
+	const rule = (await prisma.discountRule.findUnique({
 		where: { id: rule_id },
 		include: { rate: true },
-	})
+	})) as DiscountRuleWithRate | null
 	if (!rule || rule.rate.property_id !== property_id || rule.rate_id !== rate_id) {
 		throw new DomainError("not_found", "Discount rule not found")
 	}
