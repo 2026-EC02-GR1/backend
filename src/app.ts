@@ -11,7 +11,7 @@ import {
 	availabilityProxyRouter,
 	bookingsProxyRouter,
 	holdSlotsProxyRouter,
-} from "./proxy/reservation"
+} from "./proxy/booking"
 import { widgetRouter } from "./routes/widget"
 
 const app = express()
