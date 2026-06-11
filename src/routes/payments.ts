@@ -123,8 +123,9 @@ webhookRouter.post(
 
 		let event
 		try {
-			event = stripe.webhooks.constructEvent(req.body as Buffer, sig, secret)
-		} catch {
+			event = await stripe.webhooks.constructEventAsync(req.body as Buffer, sig, secret)
+		} catch (err) {
+			console.error("Webhook signature error:", err)
 			res.status(400).json({ code: "invalid_signature", message: "Invalid Stripe signature" })
 			return
 		}
