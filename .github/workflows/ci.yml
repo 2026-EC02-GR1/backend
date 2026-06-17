@@ -56,7 +56,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: DevSecOps — scan image for vulnerabilities (Trivy) ## Github registry can do this itself if needed, or we can use an integrated trivy in registry like an self hosted harbor
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ steps.image.outputs.name }}:${{ github.sha }}
           format: table
@@ -97,12 +97,11 @@ jobs:
             sh -c "bun test --reporter=junit --reporter-outfile=/out/junit.xml --coverage --coverage-reporter=lcov --coverage-dir=/out/coverage"
 
       - name: Publish test report
-        uses: dorny/test-reporter@v1
+        uses: mikepenz/action-junit-report@v6
         if: always()
         with:
-          name: Unit Tests (bun test)
-          path: ci-out/junit.xml
-          reporter: java-junit
+          report_paths: ci-out/junit.xml
+          check_name: Unit Tests (bun test)
 
       - name: Install lcov (genhtml)
         if: always()
@@ -180,6 +179,15 @@ jobs:
           docker pull ${{ steps.image.outputs.name }}:${{ github.sha }}
           docker tag ${{ steps.image.outputs.name }}:${{ github.sha }} ${{ steps.image.outputs.name }}:latest
           docker push ${{ steps.image.outputs.name }}:latest
+
+      - name: Deploy via SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key deployer@${{ secrets.DEPLOY_HOST }} \
+            "cd /opt/eadl-backend && docker compose pull && docker compose up -d"
 
       - name: Deployment summary
         run: |
