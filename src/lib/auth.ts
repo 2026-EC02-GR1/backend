@@ -1,7 +1,7 @@
-import { betterAuth } from "better-auth"
-import { prismaAdapter } from "better-auth/adapters/prisma"
-import { bearer } from "better-auth/plugins"
-import { prisma } from "../db"
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { bearer } from "better-auth/plugins";
+import { prisma } from "../db";
 
 export const auth = betterAuth({
 	database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -47,4 +47,4 @@ export const auth = betterAuth({
 			refreshTokenExpiresAt: "refresh_token_expires_at",
 		},
 	},
-})
+});

@@ -4,18 +4,19 @@
  *
  * Safe to run multiple times: reuses the manager if the email already exists.
  */
-import { PrismaClient } from "../generated/prisma/client"
-import { PrismaPg } from "@prisma/adapter-pg"
-import { Pool } from "pg"
-import { randomUUID } from "crypto"
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-const prisma = new PrismaClient({ adapter: new PrismaPg(pool) })
+import { PrismaPg } from "@prisma/adapter-pg";
+import { randomUUID } from "crypto";
+import { Pool } from "pg";
+import { PrismaClient } from "../generated/prisma/client";
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 async function main() {
 	// ── Manager ───────────────────────────────────────────
-	const email = "manager@example.com"
-	let manager = await prisma.user.findUnique({ where: { email } })
+	const email = "manager@example.com";
+	let manager = await prisma.user.findUnique({ where: { email } });
 
 	if (!manager) {
 		manager = await prisma.user.create({
@@ -25,10 +26,10 @@ async function main() {
 				email,
 				email_verified: true,
 			},
-		})
-		console.log("Created manager:", manager.id)
+		});
+		console.log("Created manager:", manager.id);
 	} else {
-		console.log("Reusing existing manager:", manager.id)
+		console.log("Reusing existing manager:", manager.id);
 	}
 
 	// ── Property ──────────────────────────────────────────
@@ -46,12 +47,16 @@ async function main() {
 			active: true,
 			user_id: manager.id,
 		},
-	})
-	console.log("Created property:", property.id, `— "${property.name}"`)
+	});
+	console.log("Created property:", property.id, `— "${property.name}"`);
 
 	// ── Base rate ─────────────────────────────────────────
-	const today = new Date()
-	const nextYear = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate())
+	const today = new Date();
+	const nextYear = new Date(
+		today.getFullYear() + 1,
+		today.getMonth(),
+		today.getDate(),
+	);
 	const rate = await prisma.rate.create({
 		data: {
 			property_id: property.id,
@@ -61,8 +66,8 @@ async function main() {
 			end_date: nextYear,
 			is_high_season: false,
 		},
-	})
-	console.log(`Created rate: ${rate.id} — €${rate.base_price_per_night}/night`)
+	});
+	console.log(`Created rate: ${rate.id} — €${rate.base_price_per_night}/night`);
 
 	// ── Discount rule (7+ nights: -10%) ───────────────────
 	await prisma.discountRule.create({
@@ -72,16 +77,16 @@ async function main() {
 			max_nights: null,
 			discount_percentage: 10,
 		},
-	})
-	console.log("Created discount rule: 7+ nights → -10%")
+	});
+	console.log("Created discount rule: 7+ nights → -10%");
 
-	console.log("\nDone. Copy this property_id into your Bruno environment:")
-	console.log(property.id)
+	console.log("\nDone. Copy this property_id into your Bruno environment:");
+	console.log(property.id);
 }
 
 main()
 	.catch((err) => {
-		console.error(err)
-		process.exit(1)
+		console.error(err);
+		process.exit(1);
 	})
-	.finally(() => pool.end())
+	.finally(() => pool.end());

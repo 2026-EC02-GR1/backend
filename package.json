@@ -1,32 +1,36 @@
 {
-  "name": "backend",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "dev": "bun run index.ts",
-    "seed:property": "bun run scripts/seed-property.ts",
-    "seed:booking": "bun run scripts/seed-booking.ts"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.4.16",
-    "@types/bun": "latest",
-    "@types/multer": "^2.1.0",
-    "@types/pg": "^8.20.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
-    "better-auth": "^1.6.16",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "multer": "^2.1.1",
-    "pg": "^8.21.0",
-    "prisma": "^7.8.0",
-    "stripe": "^22.2.0",
-    "zod": "^4.4.3"
-  }
+	"name": "backend",
+	"module": "index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "bun run index.ts",
+		"build": "bunx prisma generate",
+		"test": "bun test",
+		"lint": "biome ci .",
+		"typecheck": "tsc --noEmit",
+		"seed:property": "bun run scripts/seed-property.ts",
+		"seed:booking": "bun run scripts/seed-booking.ts"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.16",
+		"@types/bun": "latest",
+		"@types/multer": "^2.1.0",
+		"@types/pg": "^8.20.0"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"@prisma/adapter-pg": "^7.8.0",
+		"@prisma/client": "^7.8.0",
+		"better-auth": "^1.6.16",
+		"dotenv": "^17.4.2",
+		"express": "^5.2.1",
+		"multer": "^2.1.1",
+		"pg": "^8.21.0",
+		"prisma": "^7.8.0",
+		"stripe": "^22.2.0",
+		"zod": "^4.4.3"
+	}
 }

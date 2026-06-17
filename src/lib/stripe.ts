@@ -1,3 +1,3 @@
-import Stripe from "stripe"
+import Stripe from "stripe";
 
-export const stripe = new Stripe(process.env.STRIPE_API ?? "")
+export const stripe = new Stripe(process.env.STRIPE_API ?? "");

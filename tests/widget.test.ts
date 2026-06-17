@@ -21,7 +21,9 @@ describe("buildWidgetSnippet", () => {
 	});
 
 	test("rejects a non-UUID property id (prevents attribute injection)", () => {
-		expect(() => buildWidgetSnippet('x" onload="alert(1)')).toThrow(DomainError);
+		expect(() => buildWidgetSnippet('x" onload="alert(1)')).toThrow(
+			DomainError,
+		);
 		expect(() => buildWidgetSnippet("not-a-uuid")).toThrow(/must be a UUID/);
 	});
 });

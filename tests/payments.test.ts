@@ -3,8 +3,8 @@ import { DomainError } from "../src/domain/errors";
 import {
 	assertPaymentTransition,
 	canTransitionPayment,
-	paymentAmount,
 	type PaymentStatus,
+	paymentAmount,
 } from "../src/domain/payments";
 
 describe("payment status transitions", () => {
@@ -34,7 +34,9 @@ describe("payment status transitions", () => {
 	});
 
 	test("assertPaymentTransition throws a coded DomainError", () => {
-		expect(() => assertPaymentTransition("failed", "pending")).toThrow(DomainError);
+		expect(() => assertPaymentTransition("failed", "pending")).toThrow(
+			DomainError,
+		);
 		try {
 			assertPaymentTransition("failed", "pending");
 		} catch (e) {
@@ -58,7 +60,9 @@ describe("paymentAmount", () => {
 	});
 
 	test("no balance due when deposit equals total (no split payment)", () => {
-		expect(() => paymentAmount("balance", 500, 500)).toThrow(/No balance is due/);
+		expect(() => paymentAmount("balance", 500, 500)).toThrow(
+			/No balance is due/,
+		);
 	});
 
 	test("deposit greater than total is rejected", () => {
