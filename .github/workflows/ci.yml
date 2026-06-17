@@ -94,7 +94,7 @@ jobs:
         run: |
           mkdir -p ci-out/coverage
           docker run --rm -v "$PWD/ci-out:/out" ${{ needs.build.outputs.image }}:${{ github.sha }} \
-            sh -c "bun test --reporter=junit --reporter-outfile=/out/junit.xml --coverage --coverage-reporter=lcov --coverage-dir=/out/coverage"
+            sh -c "bun test --reporter=junit --reporter-outfile=/out/junit.xml --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=/out/coverage"
 
       - name: Publish test report
         uses: mikepenz/action-junit-report@v6
