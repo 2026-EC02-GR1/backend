@@ -77,6 +77,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -100,6 +103,10 @@ jobs:
           name: Unit Tests (bun test)
           path: ci-out/junit.xml
           reporter: java-junit
+
+      - name: Install lcov (genhtml)
+        if: always()
+        run: sudo apt-get update && sudo apt-get install -y lcov
 
       - name: Publish coverage summary
         uses: zgosalvez/github-actions-report-lcov@v4
