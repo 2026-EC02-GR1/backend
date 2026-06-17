@@ -151,7 +151,17 @@ jobs:
         run: bun run typecheck
 
       - name: Lint (Biome)
-        run: bun run lint
+        run: |
+          set +e
+          bunx biome ci . --colors=off --reporter=summary | tee biome-report.txt
+          exit_code=${PIPESTATUS[0]}
+          {
+            echo "## Biome lint report"
+            echo '```'
+            cat biome-report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$exit_code"
 
       - name: DevSecOps — dependency vulnerability audit
         run: bun audit --audit-level=high
