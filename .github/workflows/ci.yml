@@ -96,18 +96,11 @@ jobs:
           docker run --rm -v "$PWD/ci-out:/out" ${{ needs.build.outputs.image }}:${{ github.sha }} \
             sh -c "bun test --reporter=junit --reporter-outfile=/out/junit.xml --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=/out/coverage"
 
-      - name: Publish test report
-        uses: mikepenz/action-junit-report@v6
-        if: always()
-        with:
-          report_paths: ci-out/junit.xml
-          check_name: Unit Tests (bun test)
-
       - name: Install lcov (genhtml)
         if: always()
         run: sudo apt-get update && sudo apt-get install -y lcov
 
-      - name: Publish coverage summary
+      - name: Compute coverage
         id: lcov
         uses: zgosalvez/github-actions-report-lcov@v4
         if: always()
@@ -115,9 +108,13 @@ jobs:
           coverage-files: ci-out/coverage/lcov.info
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Write coverage to job summary
+      - name: Publish test report (with coverage)
+        uses: mikepenz/action-junit-report@v6
         if: always()
-        run: echo "**Coverage:** ${{ steps.lcov.outputs.total-coverage }}%" >> "$GITHUB_STEP_SUMMARY"
+        with:
+          report_paths: ci-out/junit.xml
+          check_name: Unit Tests (bun test)
+          job_summary_text: "**Coverage:** ${{ steps.lcov.outputs.total-coverage }}%"
 
       - name: Upload test & coverage artifacts
         uses: actions/upload-artifact@v4
