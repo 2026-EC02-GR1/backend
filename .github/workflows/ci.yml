@@ -138,6 +138,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Generate types
+        run: bunx prisma generate
+
       - name: Typecheck
         run: bun run typecheck
 
